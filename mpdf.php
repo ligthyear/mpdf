@@ -6502,16 +6502,142 @@ class mPDF
 			$buff = 0;
 		}
 
+		$STDOUT = fopen("php://stderr", "w");
+		fwrite($STDOUT, "\n" . $lineCount);
 
 		// PAGEBREAK
 		if (!$is_table && ($this->y + $check_h) > ($this->PageBreakTrigger + $buff) and ! $this->InFooter and $this->AcceptPageBreak()) {
+
+
+			// fwrite($STDOUT, "\nA:" . $this->y ."+". $stackHeight .">". $this->PageBreakTrigger. " => ");
+			// if ($this->y + $stackHeight > $this->PageBreakTrigger) {
+			// 	 fwrite($STDOUT, "true \n");
+			// } else {
+				fwrite($STDOUT, "BREAKING -------------------------------------- \n " . $this->page . "\n");
+
+ 			// 	throw new Exception;
+			// }
+
+
 			$bak_x = $this->x; //Current X position
 			// WORD SPACING
 			$ws = $this->ws; //Word Spacing
 			$charspacing = $this->charspacing; //Character Spacing
 			$this->ResetSpacing();
+			// $this->AddPage($this->CurOrientation);
 
-			$this->AddPage($this->CurOrientation);
+			fwrite($STDOUT, "\na:" . $this->y);
+			// $this->AddPage($this->CurOrientation);
+			// We broke the page, make sure we don't create
+			// orphans or widdows
+			if ($lineCount > 0) {
+				$lineHeight = $stackHeight / ($lineCount + 1);
+				$spaceLeft = ($this->PageBreakTrigger - $this->y);
+				$minO = $this->blk[$this->blklvl]['orphans'];
+				$minW = $this->blk[$this->blklvl]['widdows'];
+
+				fwrite($STDOUT,$this->page);
+				if ($linesLeft < $minO || ($lineCount - $linesLeft) < $minW) {
+					fwrite($STDOUT, "We have to move\n");
+
+					// $preBuf = $this->textbuffer;
+					// $this->textbuffer = array();
+					$save_blklvl = $this->blklvl;
+					$save_blk = $this->blk;
+					$save_silp = $this->saveInlineProperties();
+					$save_ilp = $this->InlineProperties;
+					$save_bflp = $this->InlineBDF;
+					$save_bflpc = $this->InlineBDFctr; // mPDF 6
+					// mPDF 6 pagebreaktype
+					$startpage = $this->page;
+					$pagebreaktype = $this->defaultPagebreakType;
+					if ($this->ColActive) {
+						$pagebreaktype = 'cloneall';
+					}
+
+					// mPDF 6 pagebreaktype
+					$this->_preForcedPagebreak($pagebreaktype);
+					$this->AddPage($this->CurOrientation, '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, 0);
+
+
+					// mPDF 6 pagebreaktype
+					$this->_postForcedPagebreak($pagebreaktype, $startpage, $save_blk, $save_blklvl);
+
+					$this->InlineProperties = $save_ilp;
+					$this->InlineBDF = $save_bflp;
+					$this->InlineBDFctr = $save_bflpc; // mPDF 6
+					$this->restoreInlineProperties($save_silp);
+					// $this->textbuffer = $preBuf;
+
+
+					//
+					// $save_blklvl = $this->blklvl;
+					// $save_blk = $this->blk;
+					// $this->Reset();
+					// $startpage = $this->page;
+					// $pagebreaktype = 'clonebycss';
+					// $this->lastblocklevelchange = -1;
+					// $this->_preForcedPagebreak($pagebreaktype);
+					// $this->AddPage($this->CurOrientation);
+					// $this->_postForcedPagebreak($pagebreaktype, $startpage, $save_blk, $save_blklvl);
+
+					// $this->textbuffer = $preBuf;
+
+
+					// mPDF 6 pagebreaktype - moved after pagebreak
+					// $this->blklvl++;
+					// $currblk = & $this->blk[$this->blklvl];
+					// fwrite($STDOUT, print_r($this->blk, true));
+					// $this->y = $this->PageBreakTrigger;
+					// $this->blk[$this->blklvl]['attr']['PAGEBREAKAVOIDCHECKED'] = 1;
+					// $currblk['array_i'] = $ihtml; // mPDF 6
+					// $this->blk[0]['padding_top'] += $spaceLeft;
+					// $this->kt_p00 = $this->page;
+					// $this->keep_block_together = 1;
+					// $this->blk[$this->blklvl]['y0'] = $this->y;
+
+					// $this->y = 0;
+					// $this->blk[$this->blklvl]['initial_startpage'] = $this->page;
+					// $this->blk[$this->blklvl]['startpage'] = $this->page;
+					// $this->kt_p00 = $this->page;
+					// fwrite($STDOUT, print_r($this->blk[$this->blklvl], true));
+					// $ahtml[$ihtml + 1] .= ' pagebreakavoidchecked="true";';
+					// fwrite($STDOUT, print_r($this->blk, true));
+
+					// $buf = $this->textbuffer;
+					// $this->textbuffer = array();
+					// $this->finishFlowingBlock(false);
+					// $this->textbuffer = $buf;
+					// $formerHeight = $this->lineheight;
+					// $this->lineheight = $spaceLeft;
+					// $this->blklvl = 0;
+					// $blk = $this->blk;
+					// $this->blk = array();
+
+					// fwrite($STDOUT, "BUF: \n " . print_r($this->textbuffer, true) . "\n");
+					// fclose($STDOUT);
+					// throw new Exception();
+					// $this->printbuffer(array(), 1);
+					// $this->finishFlowingBlock(false);
+					// add item before
+					// array_unshift($blk, 'a');
+					// $this->printbuffer(array(), 1);
+
+					// $this->_preForcedPagebreak('');
+					// $this->AddPage($this->CurOrientation);
+					// mPDF 6 pagebreaktype
+					// $this->_postForcedPagebreak('slice', $startpage);
+					// fwrite($STDOUT, print_r($this->blk, true));
+
+					// $this->lineheight = $formerHeight;
+					// $this->blk = $blk;
+					// $this->blklvl = $curLvl;
+					// $this->textbuffer = $buf;
+				}
+			}
+
+
+			fwrite($STDOUT, "\nb:" . $this->y);
 
 			$this->x = $bak_x;
 			// Added to correct for OddEven Margins
@@ -17466,6 +17592,8 @@ class mPDF
 		$blk['bgcolor'] = false;
 		$blk['page_break_after_avoid'] = false;
 		$blk['keep_block_together'] = false;
+		$blk['orphans'] = 2;
+		$blk['widdows'] = 2;
 		$blk['float'] = false;
 		$blk['line_height'] = '';
 		$blk['margin_collapse'] = false;
@@ -19719,6 +19847,17 @@ class mPDF
 				}
 				if ($lastbottommargin && isset($properties['MARGIN-TOP']) && $properties['MARGIN-TOP'] && empty($properties['FLOAT'])) {
 					$currblk['lastbottommargin'] = $lastbottommargin;
+				}
+
+				// mPDF 6+ orphans and widdows
+				if (isset($properties['ORPHANS'])) {
+					$orphans = (int) $properties['ORPHANS'];
+					if ($orphans >= 0) $currblk['orphans'] = $orphans;
+				}
+
+				if (isset($properties['WIDDOWS'])) {
+					$widdows = (int) $properties['WIDDOWS'];
+					if ($widdows >= 0) $currblk['widdows'] = $widdows;
 				}
 
 				if (isset($properties['Z-INDEX']) && $this->current_layer == 0) {
