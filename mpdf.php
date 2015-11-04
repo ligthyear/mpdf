@@ -6538,37 +6538,44 @@ class mPDF
 
 				fwrite($STDOUT,$this->page);
 				if ($linesLeft < $minO || ($lineCount - $linesLeft) < $minW) {
-					fwrite($STDOUT, "We have to move\n");
+					fwrite($STDOUT, "We have to move BUT HOW\n");
+					// fwrite($STDOUT, print_r($this->blk[$this->blklvl], true));
+					// fwrite($STDOUT, print_r($this->textbuffer, true));
+					// fclose($STDOUT);
+					// throw new Exception;
 
 					// $preBuf = $this->textbuffer;
-					// $this->textbuffer = array();
-					$save_blklvl = $this->blklvl;
-					$save_blk = $this->blk;
-					$save_silp = $this->saveInlineProperties();
-					$save_ilp = $this->InlineProperties;
-					$save_bflp = $this->InlineBDF;
-					$save_bflpc = $this->InlineBDFctr; // mPDF 6
-					// mPDF 6 pagebreaktype
-					$startpage = $this->page;
-					$pagebreaktype = $this->defaultPagebreakType;
-					if ($this->ColActive) {
-						$pagebreaktype = 'cloneall';
-					}
-
-					// mPDF 6 pagebreaktype
-					$this->_preForcedPagebreak($pagebreaktype);
-					$this->AddPage($this->CurOrientation, '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, 0);
-
-
-					// mPDF 6 pagebreaktype
-					$this->_postForcedPagebreak($pagebreaktype, $startpage, $save_blk, $save_blklvl);
-
-					$this->InlineProperties = $save_ilp;
-					$this->InlineBDF = $save_bflp;
-					$this->InlineBDFctr = $save_bflpc; // mPDF 6
-					$this->restoreInlineProperties($save_silp);
+					// $this->textbuffer = array(array(0=> "               "));
+					// $preblk = $this->blk;
+					// $preblklvl = $this->blklvl;
+					// $this->blk = array($this->blk[0]);
+					// $save_blk = $this->blk;
+					// $save_blklvl = $this->blklvl;
+					// $save_silp = $this->saveInlineProperties();
+					// $save_ilp = $this->InlineProperties;
+					// $save_bflp = $this->InlineBDF;
+					// $save_bflpc = $this->InlineBDFctr; // mPDF 6
+					// // mPDF 6 pagebreaktype
+					// $startpage = $this->page;
+					// $pagebreaktype = $this->defaultPagebreakType;
+					// if ($this->ColActive) {
+					// 	$pagebreaktype = 'cloneall';
+					// }
+					//
+					// // mPDF 6 pagebreaktype
+					// $this->_preForcedPagebreak($pagebreaktype);
+					// $this->AddPage($this->CurOrientation, '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0, 0, 0, 0);
+					//
+					//
+					// // mPDF 6 pagebreaktype
+					// $this->_postForcedPagebreak($pagebreaktype, $startpage, $save_blk, $save_blklvl);
+					//
+					// $this->InlineProperties = $save_ilp;
+					// $this->InlineBDF = $save_bflp;
+					// $this->InlineBDFctr = $save_bflpc; // mPDF 6
+					// $this->restoreInlineProperties($save_silp);
 					// $this->textbuffer = $preBuf;
-
+					//
 
 					//
 					// $save_blklvl = $this->blklvl;
